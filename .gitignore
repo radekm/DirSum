@@ -1,4 +1,6 @@
-.vs/
-packages/
-*/bin/
-*/obj/
+/.vs/
+/packages/
+/*/bin/
+/*/obj/
+
+/.paket/paket.exe

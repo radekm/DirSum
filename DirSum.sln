@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".paket", ".paket", "{E3BF8FB6-9D5A-4DBD-97A9-CF779B1A40DC}"
+	ProjectSection(SolutionItems) = preProject
+		paket.dependencies = paket.dependencies
+	EndProjectSection
+EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DirSum", "DirSum\DirSum.fsproj", "{7B1B44D3-9B99-4CD7-A214-FF3D7E86AC08}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DirSumTests", "DirSumTests\DirSumTests.fsproj", "{D4711AE5-DBDB-4111-82EA-FFC1884C1A1F}"
