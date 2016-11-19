@@ -1,4 +1,4 @@
-﻿
+
 module DirSum.ReportTests
 
 open Xunit

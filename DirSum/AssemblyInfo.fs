@@ -1,4 +1,4 @@
-﻿
+
 namespace DirSum
 
 open System.Reflection

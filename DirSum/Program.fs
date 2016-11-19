@@ -1,4 +1,4 @@
-﻿
+
 module DirSum.Program
 
 #nowarn "52"
