@@ -1,8 +1,8 @@
 source https://www.nuget.org/api/v2
 framework >= net452
 
-nuget Eto.Forms 2.2.0
-nuget Eto.Platform.Gtk3 2.2.0
-nuget Eto.Platform.Wpf 2.2.0
+nuget Eto.Forms 2.3.0
+nuget Eto.Platform.Gtk3 2.3.0
+nuget Eto.Platform.Wpf 2.3.0
 nuget xunit 2.1.0
 nuget xunit.runner.visualstudio 2.1.0

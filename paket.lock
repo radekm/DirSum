@@ -1,11 +1,11 @@
 FRAMEWORK: >= NET452
 NUGET
   remote: https://www.nuget.org/api/v2
-    Eto.Forms (2.2)
-    Eto.Platform.Gtk3 (2.2)
-      Eto.Forms (2.2)
-    Eto.Platform.Wpf (2.2)
-      Eto.Forms (2.2)
+    Eto.Forms (2.3)
+    Eto.Platform.Gtk3 (2.3)
+      Eto.Forms (2.3)
+    Eto.Platform.Wpf (2.3)
+      Eto.Forms (2.3)
     xunit (2.1)
       xunit.assert (2.1)
       xunit.core (2.1)
