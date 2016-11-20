@@ -68,14 +68,20 @@ type File =
 
 type Report = Set<File>
 
-let generateReport (baseDir : string) (files : Set<RelPath>) : Report =
+let generateReport
+        (baseDir : string)
+        (files : Set<RelPath>)
+        (fileProcessed : File -> unit)
+        : Report =
     files
     |> Set.map (fun relPath ->
         let path = Path.Combine(baseDir, relPath)
-        { Path = normalizePath relPath
-          Size = uint64 <| FileInfo(path).Length
-          Hash = computeHash path
-        })
+        let file = { Path = normalizePath relPath
+                     Size = uint64 <| FileInfo(path).Length
+                     Hash = computeHash path
+                   }
+        fileProcessed file
+        file)
 
 type ReportAnalysisResult =
     { ZeroSize : Set<File>

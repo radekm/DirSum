@@ -11,7 +11,7 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyTitle("DirSum")>]
 [<assembly: AssemblyDescription("Creates, analyzes and compares directory checksums.")>]
 [<assembly: AssemblyProduct("DirSum")>]
-[<assembly: AssemblyCopyright("© 2015 Radek Micek")>]
+[<assembly: AssemblyCopyright("© 2015-2016 Radek Micek")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]
 

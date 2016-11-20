@@ -94,6 +94,72 @@ module Table =
     type Row = Eto.Forms.TableRow
     type Cell = Eto.Forms.TableCell
 
+/// Runs the given action in the GUI thread.
+///
+/// Useful for actions which update GUI
+/// (some libraries like WPF enforce that these actions
+/// are executed from the GUI thread).
+let runInGuiThread (f : unit -> unit) = Eto.Forms.Application.Instance.Invoke f
+
+type CreateReportDialog(owner : Eto.Forms.Control) as me =
+    inherit Eto.Forms.Dialog()
+
+    let reportGenerationInProgress = ref false
+    let onShown = ref ignore
+
+    let progress = new Eto.Forms.ProgressBar()
+
+    do
+        let layout = new Table.Layout(Table.Row(Table.Cell(progress)))
+        layout.Spacing <- Eto.Drawing.Size(10, 10)
+        layout.Padding <- Eto.Drawing.Padding(15)
+
+        me.Title <- "Creating report…"
+        me.ClientSize <- Eto.Drawing.Size(600, 40)
+        me.Content <- layout
+
+        // Closing this dialog is not allowed while the report generation is in progress.
+        me.Closing.Add(fun ev -> ev.Cancel <- !reportGenerationInProgress)
+        me.Shown.Add(fun _ -> !onShown ())
+
+    /// Generates a report while showing this dialog with the progress bar.
+    /// Returns the generated report.
+    member me.Start(baseDir : string, files : Set<Report.RelPath>) : Report.Report =
+
+        progress.Value <- 0
+        progress.MaxValue <- files.Count
+
+        let processedFilesCount = ref 0
+        let fileProcessed _ =
+            incr processedFilesCount
+            // Beware that `progress.Value <- progress.Value + 1` will
+            // not change `progress.Value` when the underlying GUI library
+            // doesn't store `progress.Value` with enough precision.
+            // This is the reason we rely on a custom progress
+            // counter `processedFilesCount`.
+            runInGuiThread <| fun () -> progress.Value <- !processedFilesCount
+
+        let rep = ref None
+        let exn = ref None
+
+        // Start a report generation after this dialog is shown.
+        onShown := fun () ->
+            System.Threading.ThreadPool.QueueUserWorkItem(fun _ ->
+                try
+                    rep := Some <| Report.generateReport baseDir files fileProcessed
+                with
+                    | e -> exn := Some e
+                reportGenerationInProgress := false
+                runInGuiThread <| fun () -> me.Close())
+            |> ignore
+
+        reportGenerationInProgress := true
+        me.ShowModal owner
+
+        match !rep with
+        | None -> raise (!exn).Value
+        | Some rep -> rep
+
 type MainForm() as me =
     inherit Eto.Forms.Form()
 
@@ -200,7 +266,7 @@ type MainForm() as me =
     // Event handlers
 
     let onSelectNewRepFolder _ =
-        let dlg = new Eto.Forms.SelectFolderDialog()
+        use dlg = new Eto.Forms.SelectFolderDialog()
         dlg.Directory <- newRepFolder.Text
         match dlg.ShowDialog me with
         | Eto.Forms.DialogResult.Ok ->
@@ -223,7 +289,8 @@ type MainForm() as me =
                 else Set.empty
 
             if invalidFileNames.IsEmpty then
-                let rep = Report.generateReport baseDir files
+                use dlg = new CreateReportDialog(me)
+                let rep = dlg.Start(baseDir, files)
                 report <- Some rep
                 currentRep.Text <- "(in memory report)"
                 log.Text <- Format.reportAnalysis <| Report.analyzeReport rep
@@ -235,7 +302,7 @@ type MainForm() as me =
             | e -> error e "Cannot create report."
 
     let onOpenRep _ =
-        let dlg = new Eto.Forms.OpenFileDialog()
+        use dlg = new Eto.Forms.OpenFileDialog()
         dlg.Filters.Add reportFileFilter
         match dlg.ShowDialog me with
         | Eto.Forms.DialogResult.Ok ->
@@ -252,7 +319,7 @@ type MainForm() as me =
         | _ -> failwith "Unexpected dialog result."
 
     let onSaveRepAs _ =
-        let dlg = new Eto.Forms.SaveFileDialog()
+        use dlg = new Eto.Forms.SaveFileDialog()
         dlg.Filters.Add reportFileFilter
         match dlg.ShowDialog me with
         | Eto.Forms.DialogResult.Ok ->
@@ -266,7 +333,7 @@ type MainForm() as me =
         | _ -> failwith "Unexpected dialog result."
 
     let onCompareRepWith _ =
-        let dlg = new Eto.Forms.OpenFileDialog()
+        use dlg = new Eto.Forms.OpenFileDialog()
         dlg.Filters.Add reportFileFilter
         match dlg.ShowDialog me with
         | Eto.Forms.DialogResult.Ok ->
