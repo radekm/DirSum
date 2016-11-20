@@ -170,10 +170,11 @@ let compareReports (oldRep : Report) (newRep : Report) =
 let isValidBookFileName =
     let c = "[A-Za-z]"
     // Dash is surrounded by different characters.
+    // Singular possessive nouns are allowed.
     // Digits inside words aren't allowed.
-    let word = String.Format("(?:{0}|(?<={0})-(?={0}))+", c)
-    // One or two words.
-    let author = String.Format("{0}(?: {0})?", word)
+    let word = String.Format("(?:{0}|(?<={0})-(?={0}))+(?:'s)?", c)
+    // One or two words. The first word may start with `O'` (eg. `O'Brien`).
+    let author = String.Format("(?:O')?{0}(?: {0})?", word)
     // Number consists of one or more digits.
     // Version is a number which contains dots
     // and each dot is surrounded by digits.

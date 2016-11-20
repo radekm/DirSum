@@ -73,14 +73,20 @@ let isValidBookFileNameTest () =
           "Lidin - .NET IL Assembler (2014).pdf"
           // Book name - special word "F#" and version "3.0".
           "Syme - Expert F# 3.0 (2012).pdf"
+          // Book name - singular possessive noun.
+          "Cormen - Introduction to Algorithms - Instructor's manual (2001).pdf"
           // Author name - 2 words.
           "Van Le - Techniques of Prolog Programming (1993).djvu"
           // Author name - dash inside word.
           "Ben-Ari - Ada For Software Engineers (2009).pdf"
+          // Author name - surname with apostrophe.
+          "O'Donnell - Discrete Mathematics Using a Computer (2008).pdf"
         ]
     let invalidBookFileNames =
         [ // Book name - colon is not allowed.
           "Graham - Concrete Mathematics: A Foundation for Computer Science (1994).pdf"
+          // Book name - apostrophe is allowed only for singular possessive nouns.
+          "Author - Frogs' croaking (2000).pdf"
           // Book name - comma cannot be after the last word.
           "Author - Book name, (2000).pdf"
           // Author name - numbers are not allowed.
